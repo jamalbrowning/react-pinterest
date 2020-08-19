@@ -33,8 +33,9 @@ class App extends React.Component {
     return (
       <div className="App">
         <MyNavbar authed={authed}/>
-        {authed && <BoardContainer />}
         <h2>React Pinterest</h2>
+        {authed && <BoardContainer />}
+
       </div>
     );
   }
