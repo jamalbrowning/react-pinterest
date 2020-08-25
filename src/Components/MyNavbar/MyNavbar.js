@@ -6,7 +6,7 @@ class MyNavbar extends React.Component {
     return (
       <div className="MyNavbar">
         <nav className="navbar navbar-light bg-light justify-content-between">
-          <h4 className="navbar-brand"><i class="fab fa-pinterest fa-2x"></i></h4>
+          <h4 className="navbar-brand"><i className="fab fa-pinterest fa-2x"></i></h4>
             <Auth authed={this.props.authed}/>
         </nav>
       </div>
