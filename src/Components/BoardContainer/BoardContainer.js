@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import Board from '../Board/Board';
+import BoardForm from '../BoardFoarm/BoardForm';
 
 import authData from '../../helpers/data/authData';
 import boardsData from '../../helpers/data/boardsData';
@@ -13,6 +15,7 @@ class BoardContainer extends React.Component {
 
   state = {
     boards: [],
+    formOpen: false,
   }
 
   getBoards = () => {
@@ -20,6 +23,15 @@ class BoardContainer extends React.Component {
       .then((boards) => this.setState({ boards }))
       .catch((err) => console.error('get boards broke!!', err));
   };
+
+  createBoard = (newBoard) => {
+    boardsData.createBoard(newBoard)
+      .then(() => {
+        this.getBoards();
+        this.setState({ formOpen: false });
+      })
+      .catch((err) => console.error('Create Board Broke', err));
+  }
 
   componentDidMount() {
     this.getBoards();
@@ -32,14 +44,18 @@ class BoardContainer extends React.Component {
   }
 
   render() {
-    const { boards } = this.state;
+    const { boards, formOpen } = this.state;
     const { setSingleBoard } = this.props;
 
     const boardCard = boards.map((board) => <Board key={board.id} board={board} setSingleBoard={setSingleBoard} deleteBoard={this.deletBoard}/>);
 
     return (
-      <div className="card-columns">
-        {boardCard}
+      <div>
+        <button className="btn btn-warning" onClick={() => { this.setState({ formOpen: !formOpen }); }}><i className="far fa-plus-square"></i></button>
+        { formOpen ? <BoardForm createBoard={this.createBoard}/> : '' }
+        <div className="card-columns">
+          {boardCard}
+        </div>
       </div>
     );
   }
