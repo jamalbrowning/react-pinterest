@@ -12,17 +12,47 @@ import authData from '../../helpers/data/authData';
 class BoardForm extends React.Component {
   static propTypes = {
     createBoard: PropTypes.func.isRequired,
+    updateBoard: PropTypes.func.isRequired,
+    boardThatIAmEditing: PropTypes.object.isRequired,
   }
 
   state = {
     name: '',
     description: '',
     faClassName: '',
+    isEditing: false,
+  }
+
+  componentDidMount() {
+    const { boardThatIAmEditing } = this.props;
+    if (boardThatIAmEditing.name) {
+      this.setState({
+        name: boardThatIAmEditing.name,
+        description: boardThatIAmEditing.description,
+        faClassName: boardThatIAmEditing.faClassName,
+        isEditing: true,
+      });
+    }
   }
 
   changeNameEvent = (e) => {
     e.preventDefault();
     this.setState({ name: e.target.value });
+  }
+
+  editBoardEvent = (e) => {
+    e.preventDefault();
+    const { name, description, faClassName } = this.state;
+    const { updateBoard, boardThatIAmEditing } = this.props;
+
+    const myBoardWithChanges = {
+      name,
+      description,
+      faClassName,
+      uid: authData.getUid(),
+    };
+
+    updateBoard(boardThatIAmEditing.id, myBoardWithChanges);
   }
 
   changeDescriptionEvent = (e) => {
@@ -51,6 +81,13 @@ class BoardForm extends React.Component {
   }
 
   render() {
+    const {
+      description,
+      faClassName,
+      name,
+      isEditing,
+    } = this.state;
+
     return (
       <form className="col-6 offset-3">
         <div className="form-group">
@@ -60,6 +97,7 @@ class BoardForm extends React.Component {
             className="form-control"
             id="boardName"
             placeholder="Enter Board Name"
+            value={name}
             onChange={this.changeNameEvent}
           />
         </div>
@@ -70,6 +108,7 @@ class BoardForm extends React.Component {
             className="form-control"
             id="boardDescription"
             placeholder="A cool thing about this board"
+            value={description}
             onChange={this.changeDescriptionEvent}
           />
         </div>
@@ -80,10 +119,15 @@ class BoardForm extends React.Component {
             className="form-control"
             id="boardFaClassName"
             placeholder="Enter FontAwesome ClassName"
+            value={faClassName}
             onChange={this.changeFaClassNameEvent}
           />
         </div>
-        <button className="btn btn-dark" onClick={this.saveBoardEvent}>Save Board</button>
+        {
+          isEditing
+            ? <button className="btn btn-light" onClick={this.editBoardEvent}>Edit Board</button>
+            : <button className="btn btn-dark" onClick={this.saveBoardEvent}>Save Board</button>
+        }
       </form>
     );
   }
